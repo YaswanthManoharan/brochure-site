@@ -30,6 +30,13 @@ export default function AdminDashboard() {
     setFeedbacks(feedbacks.map((f) => (f.id === id ? { ...f, verified: true } : f)));
   };
 
+  const unverifyFeedback = async (id: string) => {
+    const feedbackDoc = doc(db, 'feedback', id);
+    await updateDoc(feedbackDoc, { verified: false });
+    alert('Feedback unverified!');
+    setFeedbacks(feedbacks.map((f) => (f.id === id ? { ...f, verified: false } : f)));
+  };
+
   return (
     <div>
       <h3 className="text-2xl">Admin Dashboard</h3>
@@ -44,6 +51,14 @@ export default function AdminDashboard() {
             >
               {feedback.verified ? 'Verified' : 'Verify'}
             </button>
+            {feedback.verified && (
+              <button
+                onClick={() => unverifyFeedback(feedback.id)}
+                className="px-4 py-2 ml-2 bg-red-500 text-white"
+              >
+                Unverify
+              </button>
+            )}
           </li>
         ))}
       </ul>
