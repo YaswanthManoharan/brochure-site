@@ -18,17 +18,17 @@ export default function AdminPage() {
       const userRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(userRef);
 
-      console.log(user);
-
       if (userDoc.exists()) {
         const userData = userDoc.data();
         if (userData.isAdmin) {
           setUser(user);
           setIsAdmin(true);
         } else {
+          setUser(user);
           setIsAdmin(false);
         }
       } else {
+        setUser(user);
         setIsAdmin(false);
       }
     } catch (error) {
@@ -37,6 +37,7 @@ export default function AdminPage() {
     }
   };
 
+  // Return the admin dashboard if the user is an admin
   if (user && isAdmin === true) {
     return (
       <section className="h-screen bg-gray-100 flex items-center justify-center">
@@ -45,6 +46,7 @@ export default function AdminPage() {
     );
   }
 
+  // Return the login button or an error message
   return (
     <section className="h-screen bg-gray-100 flex items-center justify-center">
       {!user ? (
@@ -52,7 +54,9 @@ export default function AdminPage() {
           Login with Google
         </button>
       ) : (
-        <p>{isAdmin === false ? 'You are not authorized.' : 'Loading...'}</p>
+        <p className="text-red-500 font-bold">
+          {isAdmin === false ? 'You are not authorized to access this page. Only admins can access the admin dashboard.' : 'Loading...'}
+        </p>
       )}
     </section>
   );
