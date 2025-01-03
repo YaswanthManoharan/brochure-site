@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, GoogleAuthProvider, db } from '../utils/firebase';
-import { collection, doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import AdminDashboard from '../components/AdminDashboard';
 
 export default function AdminPage() {
