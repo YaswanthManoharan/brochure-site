@@ -5,29 +5,19 @@ export default function Navbar() {
     <nav className="sticky top-0 bg-white shadow-md z-50">
       <ul className="flex justify-around py-4">
         <li>
-          <Link href="/">
-            <a className="text-gray-800 hover:text-blue-500">Home</a>
-          </Link>
+          <Link href="/" className="text-gray-800 hover:text-blue-500">Home</Link>
         </li>
         <li>
-          <Link href="/products">
-            <a className="text-gray-800 hover:text-blue-500">Products</a>
-          </Link>
+          <Link href="/products" className="text-gray-800 hover:text-blue-500">Products</Link>
         </li>
         <li>
-          <Link href="/reviews">
-            <a className="text-gray-800 hover:text-blue-500">Reviews</a>
-          </Link>
+          <Link href="/reviews" className="text-gray-800 hover:text-blue-500">Reviews</Link>
         </li>
         <li>
-          <Link href="/contact-us">
-            <a className="text-gray-800 hover:text-blue-500">Contact Us</a>
-          </Link>
+          <Link href="/contact-us" className="text-gray-800 hover:text-blue-500">Contact Us</Link>
         </li>
         <li>
-          <Link href="/feedback">
-            <a className="text-gray-800 hover:text-blue-500">Feedback</a>
-          </Link>
+          <Link href="/feedback" className="text-gray-800 hover:text-blue-500">Feedback</Link>
         </li>
       </ul>
     </nav>
