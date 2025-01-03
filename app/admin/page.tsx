@@ -1,13 +1,13 @@
 'use client';
 // pages/admin.tsx
 import { useState } from 'react';
-import { signInWithPopup } from 'firebase/auth';
+import { User, signInWithPopup } from 'firebase/auth';
 import { auth, GoogleAuthProvider, db } from '../utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import AdminDashboard from '../components/AdminDashboard';
 
 export default function AdminPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   const handleLogin = async () => {
