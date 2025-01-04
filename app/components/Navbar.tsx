@@ -7,6 +7,8 @@ export default function Navbar() {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
     <nav className="sticky top-0 bg-white border-b-2 border-yellow-400 shadow-md z-50">
       {/* Desktop Menu */}
@@ -58,27 +60,27 @@ export default function Navbar() {
       <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} bg-white border-t-2 border-yellow-400`}>
         <ul className="flex flex-col items-center py-4">
           <li>
-            <Link href="/" className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
+            <Link href="/" onClick={closeMenu} className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
               Home
             </Link>
           </li>
           <li>
-            <Link href="/products" className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
+            <Link href="/products" onClick={closeMenu} className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
               Products
             </Link>
           </li>
           <li>
-            <Link href="/reviews" className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
+            <Link href="/reviews" onClick={closeMenu} className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
               Reviews
             </Link>
           </li>
           <li>
-            <Link href="/contact-us" className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
+            <Link href="/contact-us" onClick={closeMenu} className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
               Contact Us
             </Link>
           </li>
           <li>
-            <Link href="/feedback" className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
+            <Link href="/feedback" onClick={closeMenu} className="text-yellow-900 font-semibold hover:text-yellow-700 transition py-2">
               Feedback
             </Link>
           </li>
