@@ -3,14 +3,16 @@ import { useState } from 'react';
 import { db } from '../utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
+const defaultFormState = { name: '', email: '', message: '', contacted_status: false };
+
 export default function ContactForm() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [form, setForm] = useState(defaultFormState);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await addDoc(collection(db, 'contactUs'), form);
     alert('Thank you! We will contact you within 24 hours.');
-    setForm({ name: '', email: '', message: '' });
+    setForm(defaultFormState);
   };
 
   return (

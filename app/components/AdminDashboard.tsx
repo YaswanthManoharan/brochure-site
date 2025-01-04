@@ -85,11 +85,11 @@ export default function AdminDashboard() {
                     <span className="capitalize">{feedback.type}</span>
                   </p>
                   <p className="text-gray-600 mb-4">{feedback.feedback}</p>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center space-x-4">
                     <button
                       onClick={() => verifyFeedback(feedback.id)}
                       disabled={feedback.verified}
-                      className={`px-4 py-2 rounded text-sm ${
+                      className={`w-full px-4 py-2 rounded text-sm ${
                         feedback.verified
                           ? 'bg-gray-500 cursor-not-allowed text-white'
                           : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
                     {feedback.verified && (
                       <button
                         onClick={() => unverifyFeedback(feedback.id)}
-                        className="px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
+                        className="w-full px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
                       >
                         Unverify
                       </button>
