@@ -38,7 +38,7 @@ export default function HomePage() {
       </div>
 
       {/* Right Side: Slideshow */}
-      <div className="w-full md:w-1/2 h-64 md:h-2/3 overflow-hidden rounded-lg shadow-lg relative border border-yellow-300 mt-8 md:mt-0">
+      <div className="w-full md:w-1/2 h-64 md:h-2/3 overflow-hidden rounded-lg shadow-lg relative border border-yellow-300 md:mt-0">
         <div
           className="flex transition-transform duration-1000 ease-in-out"
           style={{

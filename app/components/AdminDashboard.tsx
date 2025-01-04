@@ -6,19 +6,31 @@ import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 // Define the type for feedback
 type Feedback = {
   id: string;
+  name?: string;
+  type: 'product' | 'general';
   product: string;
   feedback: string;
   verified: boolean;
 };
 
 export default function AdminDashboard() {
-  // Explicitly type the state as an array of Feedback objects
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [activeSection, setActiveSection] = useState<'reviews' | 'addAdmin' | 'customers'>('reviews');
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
       const querySnapshot = await getDocs(collection(db, 'feedback'));
-      setFeedbacks(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Feedback)); // Type assertion here
+      setFeedbacks(
+        querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            name: data.name || 'Anonymous', // Default to "Anonymous" if name is missing
+            type: data.type || 'general', // Ensure type defaults to 'general' if missing
+            ...data,
+          } as Feedback;
+        })
+      );
     };
     fetchFeedbacks();
   }, []);
@@ -38,30 +50,80 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div>
-      <h3 className="text-2xl">Admin Dashboard</h3>
-      <ul>
-        {feedbacks.map((feedback) => (
-          <li key={feedback.id} className="border-b border-gray-300 py-2">
-            <p><strong>{feedback.product}:</strong> {feedback.feedback}</p>
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <aside className="w-64 bg-yellow-500 text-black fixed top-0 left-0 h-screen shadow-lg">
+        <nav className="flex flex-col h-full">
+          {['reviews', 'addAdmin', 'customers'].map((section) => (
             <button
-              onClick={() => verifyFeedback(feedback.id)}
-              disabled={feedback.verified}
-              className={`px-4 py-2 ${feedback.verified ? 'bg-gray-500' : 'bg-blue-500 text-white'}`}
+              key={section}
+              className={`p-4 text-left font-medium transition-all duration-300 hover:bg-yellow-400 ${
+                activeSection === section ? 'bg-yellow-400 border-l-4 border-black' : ''
+              }`}
+              onClick={() => setActiveSection(section as typeof activeSection)}
             >
-              {feedback.verified ? 'Verified' : 'Verify'}
+              {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
             </button>
-            {feedback.verified && (
-              <button
-                onClick={() => unverifyFeedback(feedback.id)}
-                className="px-4 py-2 ml-2 bg-red-500 text-white"
-              >
-                Unverify
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <main className="ml-64 flex-1 p-6 bg-gray-100 overflow-y-auto">
+        {activeSection === 'reviews' && (
+          <div>
+            <h3 className="text-2xl font-bold text-yellow-600 mb-6">Reviews</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {feedbacks.map((feedback) => (
+                <div
+                  key={feedback.id}
+                  className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all duration-300"
+                >
+                  <h4 className="text-lg font-semibold text-gray-700 mb-1">{feedback.product}</h4>
+                  <p className="text-sm text-gray-500 mb-4">
+                    <span className="font-medium">By:</span> {feedback.name || 'Anonymous'} |{' '}
+                    <span className="capitalize">{feedback.type}</span>
+                  </p>
+                  <p className="text-gray-600 mb-4">{feedback.feedback}</p>
+                  <div className="flex justify-between items-center">
+                    <button
+                      onClick={() => verifyFeedback(feedback.id)}
+                      disabled={feedback.verified}
+                      className={`px-4 py-2 rounded text-sm ${
+                        feedback.verified
+                          ? 'bg-gray-500 cursor-not-allowed text-white'
+                          : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
+                      }`}
+                    >
+                      {feedback.verified ? 'Verified' : 'Verify'}
+                    </button>
+                    {feedback.verified && (
+                      <button
+                        onClick={() => unverifyFeedback(feedback.id)}
+                        className="px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
+                      >
+                        Unverify
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {activeSection === 'addAdmin' && (
+          <div>
+            <h3 className="text-2xl font-bold text-yellow-600 mb-4">Add Admin</h3>
+            <p>Feature coming soon!</p>
+          </div>
+        )}
+        {activeSection === 'customers' && (
+          <div>
+            <h3 className="text-2xl font-bold text-yellow-600 mb-4">Customers</h3>
+            <p>Feature coming soon!</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
