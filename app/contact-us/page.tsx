@@ -8,8 +8,9 @@ export default function ContactUsPage() {
         <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Contact Us</h2>
           <p className="text-gray-600 mb-6">
-            Got questions or need assistance? We're here to help! Fill out the form or reach us through the following:
+            Got questions or need assistance? We&#39;re here to help! Fill out the form or reach us through the following:
           </p>
+
           <div className="space-y-4">
             <div>
               <h4 className="text-lg font-semibold text-gray-800">Phone:</h4>
