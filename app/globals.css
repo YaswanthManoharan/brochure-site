@@ -4,21 +4,19 @@
 
 @keyframes borderGlow {
     0% {
-      border-color: rgba(255, 255, 255, 0.1); /* Reduce opacity for a subtler effect */
-      box-shadow: 0 0 5px rgba(255, 255, 255, 0.1); /* Reduce blur radius and opacity */
+      border-color: rgba(255, 223, 134, 0.1);
+      box-shadow: 0 0 5px rgba(255, 223, 134, 0.1);
     }
     50% {
-      border-color: rgba(255, 255, 255, 0.2); /* Slightly brighter at midpoint */
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* Slightly more pronounced at midpoint */
+      border-color: rgba(255, 223, 134, 0.3);
+      box-shadow: 0 0 10px rgba(255, 223, 134, 0.3);
     }
     100% {
-      border-color: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 223, 134, 0.1);
+      box-shadow: 0 0 5px rgba(255, 223, 134, 0.1);
     }
-  }
-  
-  .animate-borderGlow {
-    animation: borderGlow 3s infinite ease-in-out;
-  }
-  
-  
+}
+
+.animate-borderGlow {
+  animation: borderGlow 3s infinite ease-in-out;
+}

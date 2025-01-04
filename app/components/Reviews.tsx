@@ -34,7 +34,7 @@ export default function Reviews() {
       {/* Left Section */}
       <div className="md:w-1/3 p-6 bg-gradient-to-b from-yellow-400 to-yellow-300 flex flex-col items-center justify-center text-gray-900 rounded-b-lg md:rounded-r-lg md:rounded-bl-none shadow-lg">
         <h2 className="text-3xl font-bold text-center mb-4">What Customers Say</h2>
-        <p className="text-lg text-center mb-6 text-gray-700">
+        <p className="text-lg text-center mb-6 text-gray-800">
           Real voices of our satisfied customers. Discover how our products and services have made a difference in their lives.
         </p>
         <div className="text-5xl text-yellow-600 drop-shadow-lg">💬</div>
