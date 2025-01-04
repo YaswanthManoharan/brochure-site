@@ -13,18 +13,18 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
     return (
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="bg-yellow-50 shadow-md rounded-lg overflow-hidden transition hover:shadow-xl hover:scale-105 transform duration-300">
             <Image
                 src={product.image}
                 alt={product.name}
                 className="object-cover"
-                width={400} // Replace with appropriate width
-                height={192} // Replace with appropriate height
+                width={400}
+                height={192}
                 layout="responsive"
             />
             <div className="p-4">
-                <h3 className="text-lg font-semibold">{product.name}</h3>
-                <p className="text-gray-500">₹{product.price}</p>
+                <h3 className="text-lg font-bold text-yellow-800">{product.name}</h3>
+                <p className="text-yellow-700 font-semibold">₹{product.price}</p>
             </div>
         </div>
     );
