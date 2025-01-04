@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { db } from '../utils/firebase';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 
-// Define the type for feedback
 type Feedback = {
   id: string;
   name?: string;
@@ -13,9 +12,18 @@ type Feedback = {
   verified: boolean;
 };
 
+type Contact = {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  contacted_status: boolean;
+};
+
 export default function AdminDashboard() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
-  const [activeSection, setActiveSection] = useState<'reviews' | 'addAdmin' | 'customers'>('reviews');
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [activeSection, setActiveSection] = useState<'reviews' | 'addAdmin' | 'customers' | 'contactUs'>('reviews');
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -25,14 +33,32 @@ export default function AdminDashboard() {
           const data = doc.data();
           return {
             id: doc.id,
-            name: data.name || 'Anonymous', // Default to "Anonymous" if name is missing
-            type: data.type || 'general', // Ensure type defaults to 'general' if missing
+            name: data.name || 'Anonymous',
+            type: data.type || 'general',
             ...data,
           } as Feedback;
         })
       );
     };
+
+    const fetchContacts = async () => {
+      const querySnapshot = await getDocs(collection(db, 'contactUs'));
+      setContacts(
+        querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            name: data.name || 'Anonymous',
+            email: data.email,
+            message: data.message,
+            contacted_status: data.contacted_status || false,
+          } as Contact;
+        })
+      );
+    };
+
     fetchFeedbacks();
+    fetchContacts();
   }, []);
 
   const verifyFeedback = async (id: string) => {
@@ -49,12 +75,23 @@ export default function AdminDashboard() {
     setFeedbacks(feedbacks.map((f) => (f.id === id ? { ...f, verified: false } : f)));
   };
 
+  const changeContactStatus = async (id: string, status: boolean) => {
+    const contactDoc = doc(db, 'contactUs', id);
+    await updateDoc(contactDoc, { contacted_status: !status });
+    setContacts(
+      contacts.map((c) =>
+        c.id === id ? { ...c, contacted_status: !status } : c
+      )
+    );
+    alert(`Contact status changed to ${!status ? 'Contacted' : 'Not yet contacted'}`);
+  };
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
       <aside className="w-64 bg-yellow-500 text-black fixed top-0 left-0 h-screen shadow-lg">
         <nav className="flex flex-col h-full">
-          {['reviews', 'addAdmin', 'customers'].map((section) => (
+          {['reviews', 'addAdmin', 'customers', 'contactUs'].map((section) => (
             <button
               key={section}
               className={`p-4 text-left font-medium transition-all duration-300 hover:bg-yellow-400 ${
@@ -111,12 +148,52 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+
+        {activeSection === 'contactUs' && (
+          <div>
+            <h3 className="text-2xl font-bold text-yellow-600 mb-6">Contact Us</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {contacts.map((contact) => (
+                <div
+                  key={contact.id}
+                  className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all duration-300"
+                >
+                  <h4 className="text-lg font-semibold text-gray-700 mb-1">{contact.name}</h4>
+                  <p className="text-sm text-gray-500 mb-4">
+                    <span className="font-medium">Email:</span> {contact.email}
+                  </p>
+                  <p className="text-gray-600 mb-4">{contact.message}</p>
+                  <div className="flex justify-between items-center space-x-4">
+                    <button
+                      disabled={contact.contacted_status}
+                      className={`w-full px-4 py-2 rounded text-sm ${
+                        contact.contacted_status
+                          ? 'bg-green-600 cursor-not-allowed text-white'
+                          : 'bg-gray-400 text-black transition-all duration-300'
+                      }`}
+                    >
+                      {contact.contacted_status ? 'Contacted' : 'Not yet contacted'}
+                    </button>
+                    <button
+                      onClick={() => changeContactStatus(contact.id, contact.contacted_status)}
+                      className="w-full px-4 py-2 bg-blue-500 text-white hover:bg-blue-400 rounded text-sm transition-all duration-300"
+                    >
+                      Change Status
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {activeSection === 'addAdmin' && (
           <div>
             <h3 className="text-2xl font-bold text-yellow-600 mb-4">Add Admin</h3>
             <p>Feature coming soon!</p>
           </div>
         )}
+
         {activeSection === 'customers' && (
           <div>
             <h3 className="text-2xl font-bold text-yellow-600 mb-4">Customers</h3>
