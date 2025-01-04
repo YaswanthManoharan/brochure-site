@@ -46,13 +46,13 @@ export default function HomePage() {
           }}
         >
           {slides.map((src, index) => (
-            <div key={index} className="w-full h-full flex-shrink-0">
+            <div key={index} className="w-full h-full flex-shrink-0 relative">
               <Image
                 src={src}
                 alt={`Slide ${index + 1}`}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg"
+                width={800}  // Set an explicit width (or adjust based on your layout)
+                height={500} // Set an explicit height (adjust accordingly)
+                className="rounded-lg object-cover"
               />
             </div>
           ))}
