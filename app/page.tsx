@@ -19,13 +19,13 @@ export default function HomePage() {
   }, [slides.length]);
 
   return (
-    <section className="h-screen bg-gradient-to-r from-yellow-100 to-yellow-50 flex items-center justify-between px-10">
+    <section className="h-screen bg-gradient-to-r from-yellow-100 to-yellow-50 flex flex-col md:flex-row items-center justify-between px-6 md:px-10">
       {/* Left Side: Intro Section */}
-      <div className="w-1/2 space-y-6">
-        <h1 className="text-5xl font-extrabold text-yellow-800">
+      <div className="w-full md:w-1/2 space-y-6 text-center md:text-left">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-yellow-800">
           Welcome to Cotton Haven
         </h1>
-        <p className="text-lg text-yellow-900">
+        <p className="text-base md:text-lg text-yellow-900">
           Discover the finest cotton products that combine comfort, quality, and
           sustainability. Explore our range of handcrafted goods designed to
           bring softness and elegance into your life.
@@ -38,7 +38,7 @@ export default function HomePage() {
       </div>
 
       {/* Right Side: Slideshow */}
-      <div className="w-1/2 h-2/3 overflow-hidden rounded-lg shadow-lg relative border border-yellow-300">
+      <div className="w-full md:w-1/2 h-64 md:h-2/3 overflow-hidden rounded-lg shadow-lg relative border border-yellow-300 mt-8 md:mt-0">
         <div
           className="flex transition-transform duration-1000 ease-in-out"
           style={{
@@ -50,9 +50,9 @@ export default function HomePage() {
               <Image
                 src={src}
                 alt={`Slide ${index + 1}`}
-                width={800}  // Set an explicit width (or adjust based on your layout)
-                height={500} // Set an explicit height (adjust accordingly)
-                className="rounded-lg object-cover"
+                width={800}
+                height={500}
+                className="rounded-lg object-cover w-full h-full"
               />
             </div>
           ))}
