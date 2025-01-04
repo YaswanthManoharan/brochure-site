@@ -1,5 +1,6 @@
 'use client';
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
@@ -45,12 +46,15 @@ export default function HomePage() {
           }}
         >
           {slides.map((src, index) => (
-            <img
-              key={index}
-              src={src}
-              alt={`Slide ${index + 1}`}
-              className="w-full h-full object-cover flex-shrink-0"
-            />
+            <div key={index} className="w-full h-full flex-shrink-0">
+              <Image
+                src={src}
+                alt={`Slide ${index + 1}`}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-lg"
+              />
+            </div>
           ))}
         </div>
       </div>
