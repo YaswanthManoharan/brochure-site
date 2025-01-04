@@ -19,26 +19,26 @@ export default function HomePage() {
   }, [slides.length]);
 
   return (
-    <section className="h-screen bg-gradient-to-r from-blue-50 to-blue-100 flex items-center justify-between px-10">
+    <section className="h-screen bg-gradient-to-r from-yellow-100 to-yellow-50 flex items-center justify-between px-10">
       {/* Left Side: Intro Section */}
-      <div className="w-1/2 space-y-4">
-        <h1 className="text-5xl font-extrabold text-blue-900">
+      <div className="w-1/2 space-y-6">
+        <h1 className="text-5xl font-extrabold text-yellow-800">
           Welcome to Cotton Haven
         </h1>
-        <p className="text-lg text-gray-700">
+        <p className="text-lg text-yellow-900">
           Discover the finest cotton products that combine comfort, quality, and
           sustainability. Explore our range of handcrafted goods designed to
           bring softness and elegance into your life.
         </p>
         <Link href="/products">
-          <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">
+          <button className="mt-4 px-6 py-2 bg-yellow-500 text-white font-semibold rounded hover:bg-yellow-600 transition shadow-lg">
             Explore Our Products
           </button>
         </Link>
       </div>
 
       {/* Right Side: Slideshow */}
-      <div className="w-1/2 h-2/3 overflow-hidden rounded-lg shadow-lg relative">
+      <div className="w-1/2 h-2/3 overflow-hidden rounded-lg shadow-lg relative border border-yellow-300">
         <div
           className="flex transition-transform duration-1000 ease-in-out"
           style={{
