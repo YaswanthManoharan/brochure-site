@@ -133,9 +133,8 @@ export default function AdminDashboard({ userId }: { userId: string }) {
           {['reviews', 'customers', ...(isSuperAdmin ? ['addOrRemoveRoles'] : [])].map((section) => (
             <button
               key={section}
-              className={`p-4 text-left font-medium transition-all duration-300 hover:bg-yellow-400 ${
-                activeSection === section ? 'bg-yellow-400 border-l-4 border-black' : ''
-              }`}
+              className={`p-4 text-left font-medium transition-all duration-300 hover:bg-yellow-400 ${activeSection === section ? 'bg-yellow-400 border-l-4 border-black' : ''
+                }`}
               onClick={() => setActiveSection(section as typeof activeSection)}
             >
               {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
@@ -165,11 +164,10 @@ export default function AdminDashboard({ userId }: { userId: string }) {
                     <button
                       onClick={() => verifyFeedback(feedback.id)}
                       disabled={feedback.verified}
-                      className={`w-full px-4 py-2 rounded text-sm ${
-                        feedback.verified
+                      className={`w-full px-4 py-2 rounded text-sm ${feedback.verified
                           ? 'bg-gray-500 cursor-not-allowed text-white'
                           : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
-                      }`}
+                        }`}
                     >
                       {feedback.verified ? 'Verified' : 'Verify'}
                     </button>
@@ -205,11 +203,10 @@ export default function AdminDashboard({ userId }: { userId: string }) {
                   <div className="flex justify-between items-center space-x-4">
                     <button
                       disabled={contact.contacted_status}
-                      className={`w-full px-4 py-2 rounded text-sm ${
-                        contact.contacted_status
+                      className={`w-full px-4 py-2 rounded text-sm ${contact.contacted_status
                           ? 'bg-green-600 cursor-not-allowed text-white'
                           : 'bg-gray-400 text-black transition-all duration-300'
-                      }`}
+                        }`}
                     >
                       {contact.contacted_status ? 'Contacted' : 'Not yet contacted'}
                     </button>
@@ -235,10 +232,12 @@ export default function AdminDashboard({ userId }: { userId: string }) {
                 {users.filter((user) => user.isAdmin).map((user) => (
                   <li key={user.id} className="text-gray-600">
                     {user.email}
+                    {user.isSuperAdmin && <span className="text-sm text-yellow-600 ml-2">(SuperAdmin)</span>}
                   </li>
                 ))}
               </ul>
             </div>
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
