@@ -18,18 +18,24 @@ const products = [
 
 export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [priceFilter, setPriceFilter] = useState<string | null>(null);
+  const [priceFilter, setPriceFilter] = useState<{ min: number; max: number } | null>(null);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Check for price range filtering
     const matchesPrice =
-      priceFilter === 'below2000'
-        ? product.price < 2000
-        : priceFilter === 'above2000'
-          ? product.price >= 2000
-          : true;
+      priceFilter
+        ? product.price >= priceFilter.min && product.price <= priceFilter.max
+        : true; // If no price filter, include all products
+
     return matchesSearch && matchesPrice;
   });
+
+  const handleFilterApply = () => {
+    // Here you can perform additional actions if needed after applying the filter
+    console.log('Filter applied', { searchQuery, priceFilter });
+  };
 
   return (
     <section className="min-h-screen bg-yellow-100 p-6">
@@ -39,6 +45,7 @@ export default function ProductsPage() {
         setSearchQuery={setSearchQuery}
         priceFilter={priceFilter}
         setPriceFilter={setPriceFilter}
+        //onFilterApply={handleFilterApply} // Pass filter apply handler
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
         {filteredProducts.map((product) => (
