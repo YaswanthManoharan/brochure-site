@@ -32,10 +32,10 @@ export default function ProductsPage() {
     return matchesSearch && matchesPrice;
   });
 
-  const handleFilterApply = () => {
+  //const handleFilterApply = () => {
     // Here you can perform additional actions if needed after applying the filter
-    console.log('Filter applied', { searchQuery, priceFilter });
-  };
+    //console.log('Filter applied', { searchQuery, priceFilter });
+  //};
 
   return (
     <section className="min-h-screen bg-yellow-100 p-6">
