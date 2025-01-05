@@ -165,8 +165,8 @@ export default function AdminDashboard({ userId }: { userId: string }) {
                       onClick={() => verifyFeedback(feedback.id)}
                       disabled={feedback.verified}
                       className={`w-full px-4 py-2 rounded text-sm ${feedback.verified
-                          ? 'bg-gray-500 cursor-not-allowed text-white'
-                          : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
+                        ? 'bg-gray-500 cursor-not-allowed text-white'
+                        : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
                         }`}
                     >
                       {feedback.verified ? 'Verified' : 'Verify'}
@@ -204,8 +204,8 @@ export default function AdminDashboard({ userId }: { userId: string }) {
                     <button
                       disabled={contact.contacted_status}
                       className={`w-full px-4 py-2 rounded text-sm ${contact.contacted_status
-                          ? 'bg-green-600 cursor-not-allowed text-white'
-                          : 'bg-gray-400 text-black transition-all duration-300'
+                        ? 'bg-green-600 cursor-not-allowed text-white'
+                        : 'bg-gray-400 text-black transition-all duration-300'
                         }`}
                     >
                       {contact.contacted_status ? 'Contacted' : 'Not yet contacted'}
@@ -270,11 +270,13 @@ export default function AdminDashboard({ userId }: { userId: string }) {
                   className="w-full px-4 py-2 border border-gray-300 rounded-md mb-4"
                 >
                   <option value="">Select an admin</option>
-                  {users.filter((user) => user.isAdmin).map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.email}
-                    </option>
-                  ))}
+                  {users
+                    .filter((user) => user.isAdmin && !user.isSuperAdmin)
+                    .map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.email}
+                      </option>
+                    ))}
                 </select>
                 <button
                   onClick={() => updateUserRole(selectedUser, false)}
