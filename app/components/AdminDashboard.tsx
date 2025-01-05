@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { parse } from 'date-fns';
 import { db } from '../utils/firebase';
-import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, Timestamp } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase'; // Assuming you have initialized Firebase Auth in utils/firebase.js
 
@@ -9,9 +10,11 @@ type Feedback = {
   id: string;
   name?: string;
   type: 'product' | 'general';
-  product: string;
+  product: string[];
   feedback: string;
   verified: boolean;
+  generalCategory: string;
+  formattedtime: string;
 };
 
 type Contact = {
@@ -27,6 +30,11 @@ type User = {
   email: string;
   isAdmin: boolean;
   isSuperAdmin: boolean;
+};
+
+type FirestoreTimestamp = {
+  seconds: number;
+  nanoseconds: number;
 };
 
 export default function AdminDashboard({ userId }: { userId: string }) {
@@ -48,6 +56,7 @@ export default function AdminDashboard({ userId }: { userId: string }) {
             id: doc.id,
             name: data.name || 'Anonymous',
             type: data.type || 'general',
+            formattedtime: convertTimestampToDate(data.timestamp) || 'Date Unknown',
             ...data,
           } as Feedback;
         })
@@ -69,6 +78,20 @@ export default function AdminDashboard({ userId }: { userId: string }) {
         })
       );
     };
+
+    const convertTimestampToDate = (timestamp: FirestoreTimestamp | undefined) => {
+      if (!timestamp || typeof timestamp.seconds === 'undefined') {
+        return 'Unknown date'; // Handle missing or invalid timestamp
+      }
+      const date = new Date(timestamp.seconds * 1000); // Convert seconds to milliseconds
+      return date.toLocaleString(); // Convert to a human-readable string
+    };
+
+    // Example usage:
+    const timestamp = { seconds: 1736080554, nanoseconds: 723000000 };
+    const formattedDate = convertTimestampToDate(timestamp);
+    console.log(formattedDate); // Outputs: "1/5/2025, 6:05:54 PM" (format depends on locale)
+
 
     const fetchUsers = async () => {
       const querySnapshot = await getDocs(collection(db, 'users'));
@@ -203,40 +226,91 @@ export default function AdminDashboard({ userId }: { userId: string }) {
         {activeSection === 'reviews' && (
           <div>
             <h3 className="text-2xl font-bold text-yellow-600 mb-6">Reviews</h3>
+
+            {/* Product Reviews Section */}
+            <h4 className="text-xl font-bold text-gray-700 mb-4">Product Reviews</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {feedbacks.map((feedback) => (
-                <div
-                  key={feedback.id}
-                  className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all duration-300"
-                >
-                  <h4 className="text-lg font-semibold text-gray-700 mb-1">{feedback.product}</h4>
-                  <p className="text-sm text-gray-500 mb-4">
-                    <span className="font-medium">By:</span> {feedback.name || 'Anonymous'} |{' '}
-                    <span className="capitalize">{feedback.type}</span>
-                  </p>
-                  <p className="text-gray-600 mb-4">{feedback.feedback}</p>
-                  <div className="flex justify-between items-center space-x-4">
-                    <button
-                      onClick={() => verifyFeedback(feedback.id)}
-                      disabled={feedback.verified}
-                      className={`w-full px-4 py-2 rounded text-sm ${feedback.verified
-                        ? 'bg-gray-500 cursor-not-allowed text-white'
-                        : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
-                        }`}
-                    >
-                      {feedback.verified ? 'Verified' : 'Verify'}
-                    </button>
-                    {feedback.verified && (
+              {feedbacks
+                .filter((feedback) => feedback.type === 'product')
+                .sort((a, b) => Number(a.verified) - Number(b.verified)) // Convert boolean to number for sorting
+                .map((feedback) => (
+                  <div
+                    key={feedback.id}
+                    className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all duration-300"
+                  >
+                    <h4 className="text-lg font-semibold text-gray-700 mb-1">{feedback.name || 'Anonymous'}</h4>
+                    <p className="text-sm text-gray-500 mb-4">
+                      <span className="font-medium">Products:</span> {feedback.product.join(', ')}
+                    </p>
+                    <p className="text-gray-500 text-sm mb-2">
+                      <span className="font-medium">Recorded Time: </span>{feedback.formattedtime}
+                    </p>
+                    <p className="text-gray-600 mb-4">{feedback.feedback}</p>
+                    <div className="flex justify-between items-center space-x-4">
                       <button
-                        onClick={() => unverifyFeedback(feedback.id)}
-                        className="w-full px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
+                        onClick={() => verifyFeedback(feedback.id)}
+                        disabled={feedback.verified}
+                        className={`w-full px-4 py-2 rounded text-sm ${feedback.verified
+                          ? 'bg-gray-500 cursor-not-allowed text-white'
+                          : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
+                          }`}
                       >
-                        Unverify
+                        {feedback.verified ? 'Verified' : 'Verify'}
                       </button>
-                    )}
+                      {feedback.verified && (
+                        <button
+                          onClick={() => unverifyFeedback(feedback.id)}
+                          className="w-full px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
+                        >
+                          Unverify
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+            </div>
+
+            {/* General Reviews Section */}
+            <h4 className="text-xl font-bold text-gray-700 mt-8 mb-4">General Reviews</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {feedbacks
+                .filter((feedback) => feedback.type === 'general')
+                .sort((a, b) => Number(a.verified) - Number(b.verified)) // Convert boolean to number for sorting
+                .map((feedback) => (
+                  <div
+                    key={feedback.id}
+                    className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all duration-300"
+                  >
+                    <h4 className="text-lg font-semibold text-gray-700 mb-1">{feedback.name || 'Anonymous'}</h4>
+                    <p className="text-sm text-gray-500 mb-4">
+                      <span className="font-medium">Category:</span> {feedback.generalCategory}
+                    </p>
+                    <p className="text-gray-500 text-sm mb-2">
+                      <span className="font-medium">Recorded Time: </span>{feedback.formattedtime}
+                    </p>
+                    <p className="text-gray-600 mb-4">{feedback.feedback}</p>
+                    <div className="flex justify-between items-center space-x-4">
+                      <button
+                        onClick={() => verifyFeedback(feedback.id)}
+                        disabled={feedback.verified}
+                        className={`w-full px-4 py-2 rounded text-sm ${feedback.verified
+                          ? 'bg-gray-500 cursor-not-allowed text-white'
+                          : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
+                          }`}
+                      >
+                        {feedback.verified ? 'Verified' : 'Verify'}
+                      </button>
+                      {feedback.verified && (
+                        <button
+                          onClick={() => unverifyFeedback(feedback.id)}
+                          className="w-full px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
+                        >
+                          Unverify
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         )}
