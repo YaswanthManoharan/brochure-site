@@ -8,7 +8,7 @@ export default function FeedbackPage() {
         <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Share Your Feedback</h2>
           <p className="text-gray-600 mb-6">
-            Your opinions and suggestions mean a lot to us! Let us know what you think about our products and services, 
+            Your opinions and suggestions mean a lot to us! Let us know what you think about our products and services,
             and help us improve for you.
           </p>
           <div className="space-y-4">
