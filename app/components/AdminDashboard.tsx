@@ -24,14 +24,16 @@ type User = {
   id: string;
   email: string;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
 };
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ userId }: { userId: string }) {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [activeSection, setActiveSection] = useState<'reviews' | 'addOrRemoveRoles' | 'customers'>('reviews');
   const [selectedUser, setSelectedUser] = useState<string>('');
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -67,22 +69,29 @@ export default function AdminDashboard() {
 
     const fetchUsers = async () => {
       const querySnapshot = await getDocs(collection(db, 'users'));
-      setUsers(
-        querySnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            email: data.email,
-            isAdmin: data.isAdmin || false,
-          } as User;
-        })
-      );
+      const userDocs = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          email: data.email,
+          isAdmin: data.isAdmin || false,
+          isSuperAdmin: data.isSuperAdmin || false,
+        } as User;
+      });
+
+      setUsers(userDocs);
+
+      // Assuming the logged-in user has an id 'currentUserId', fetch their details
+      const currentUser = userDocs.find((user) => user.id === userId);
+      if (currentUser) {
+        setIsSuperAdmin(currentUser.isSuperAdmin);
+      }
     };
 
     fetchFeedbacks();
     fetchContacts();
     fetchUsers();
-  }, []);
+  }, [userId]);
 
   const verifyFeedback = async (id: string) => {
     const feedbackDoc = doc(db, 'feedback', id);
@@ -121,7 +130,7 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <aside className="w-64 bg-yellow-500 text-black fixed top-0 left-0 h-screen shadow-lg">
         <nav className="flex flex-col h-full">
-          {['reviews', 'addOrRemoveRoles', 'customers'].map((section) => (
+          {['reviews', 'customers', ...(isSuperAdmin ? ['addOrRemoveRoles'] : [])].map((section) => (
             <button
               key={section}
               className={`p-4 text-left font-medium transition-all duration-300 hover:bg-yellow-400 ${
@@ -217,7 +226,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {activeSection === 'addOrRemoveRoles' && (
+        {isSuperAdmin && activeSection === 'addOrRemoveRoles' && (
           <div>
             <h3 className="text-2xl font-bold text-yellow-600 mb-4">Add or Remove Roles</h3>
             <div className="mb-6">

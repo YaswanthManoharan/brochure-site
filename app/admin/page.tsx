@@ -1,5 +1,4 @@
 'use client';
-// pages/admin.tsx
 import { useState } from 'react';
 import { User, signInWithPopup } from 'firebase/auth';
 import { auth, GoogleAuthProvider, db } from '../utils/firebase';
@@ -37,16 +36,14 @@ export default function AdminPage() {
     }
   };
 
-  // Return the admin dashboard if the user is an admin
   if (user && isAdmin === true) {
     return (
       <section className="h-screen bg-gray-100 flex items-center justify-center">
-        <AdminDashboard />
+        <AdminDashboard userId={user.uid} />
       </section>
     );
   }
 
-  // Return the login button or an error message
   return (
     <section className="h-screen bg-gray-100 flex items-center justify-center">
       {!user ? (
