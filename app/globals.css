@@ -20,3 +20,16 @@
 .animate-borderGlow {
   animation: borderGlow 3s infinite ease-in-out;
 }
+
+/* Ensure that the body and html take up the full viewport */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  height: 100%;
+}

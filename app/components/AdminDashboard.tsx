@@ -126,25 +126,28 @@ export default function AdminDashboard({ userId }: { userId: string }) {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 bg-yellow-500 text-black fixed top-0 left-0 h-screen shadow-lg">
-        <nav className="flex flex-col h-full">
-          {['reviews', 'customers', ...(isSuperAdmin ? ['addOrRemoveRoles'] : [])].map((section) => (
-            <button
-              key={section}
-              className={`p-4 text-left font-medium transition-all duration-300 hover:bg-yellow-400 ${activeSection === section ? 'bg-yellow-400 border-l-4 border-black' : ''
-                }`}
-              onClick={() => setActiveSection(section as typeof activeSection)}
-            >
-              {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
-            </button>
-          ))}
+    <div className="w-full flex flex-col h-full">
+      {/* Navbar */}
+      <header className="bg-yellow-500 text-black p-4 shadow-md">
+        <nav className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Admin Dashboard</h2>
+          <div className="flex space-x-4">
+            {['reviews', 'customers', ...(isSuperAdmin ? ['addOrRemoveRoles'] : [])].map((section) => (
+              <button
+                key={section}
+                className={`text-black font-medium transition-all duration-300 hover:bg-yellow-400 p-2 rounded ${activeSection === section ? 'bg-yellow-400 border-b-4 border-black' : ''
+                  }`}
+                onClick={() => setActiveSection(section as typeof activeSection)}
+              >
+                {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
+              </button>
+            ))}
+          </div>
         </nav>
-      </aside>
+      </header>
 
       {/* Main Content */}
-      <main className="ml-64 flex-1 p-6 bg-gray-100 overflow-y-auto">
+      <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
         {activeSection === 'reviews' && (
           <div>
             <h3 className="text-2xl font-bold text-yellow-600 mb-6">Reviews</h3>
@@ -238,7 +241,6 @@ export default function AdminDashboard({ userId }: { userId: string }) {
               </ul>
             </div>
 
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-gray-700 mb-2">Add Admin</h4>
@@ -289,6 +291,11 @@ export default function AdminDashboard({ userId }: { userId: string }) {
           </div>
         )}
       </main>
+      <footer className="bg-yellow-400 text-black py-4 mt-6">
+        <div className="text-center">
+          <p>&copy; {new Date().getFullYear()} Your Company. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }
