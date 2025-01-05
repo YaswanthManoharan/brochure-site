@@ -20,10 +20,18 @@ type Contact = {
   contacted_status: boolean;
 };
 
+type User = {
+  id: string;
+  email: string;
+  isAdmin: boolean;
+};
+
 export default function AdminDashboard() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const [activeSection, setActiveSection] = useState<'reviews' | 'addAdmin' | 'customers'>('reviews');
+  const [users, setUsers] = useState<User[]>([]);
+  const [activeSection, setActiveSection] = useState<'reviews' | 'addOrRemoveRoles' | 'customers'>('reviews');
+  const [selectedUser, setSelectedUser] = useState<string>('');
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -57,8 +65,23 @@ export default function AdminDashboard() {
       );
     };
 
+    const fetchUsers = async () => {
+      const querySnapshot = await getDocs(collection(db, 'users'));
+      setUsers(
+        querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            email: data.email,
+            isAdmin: data.isAdmin || false,
+          } as User;
+        })
+      );
+    };
+
     fetchFeedbacks();
     fetchContacts();
+    fetchUsers();
   }, []);
 
   const verifyFeedback = async (id: string) => {
@@ -86,12 +109,19 @@ export default function AdminDashboard() {
     alert(`Contact status changed to ${!status ? 'Contacted' : 'Not yet contacted'}`);
   };
 
+  const updateUserRole = async (id: string, isAdmin: boolean) => {
+    const userDoc = doc(db, 'users', id);
+    await updateDoc(userDoc, { isAdmin });
+    setUsers(users.map((u) => (u.id === id ? { ...u, isAdmin } : u)));
+    alert(`User role updated to ${isAdmin ? 'Admin' : 'User'}`);
+  };
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
       <aside className="w-64 bg-yellow-500 text-black fixed top-0 left-0 h-screen shadow-lg">
         <nav className="flex flex-col h-full">
-          {['reviews', 'addAdmin', 'customers'].map((section) => (
+          {['reviews', 'addOrRemoveRoles', 'customers'].map((section) => (
             <button
               key={section}
               className={`p-4 text-left font-medium transition-all duration-300 hover:bg-yellow-400 ${
@@ -187,10 +217,65 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {activeSection === 'addAdmin' && (
+        {activeSection === 'addOrRemoveRoles' && (
           <div>
-            <h3 className="text-2xl font-bold text-yellow-600 mb-4">Add Admin</h3>
-            <p>Feature coming soon!</p>
+            <h3 className="text-2xl font-bold text-yellow-600 mb-4">Add or Remove Roles</h3>
+            <div className="mb-6">
+              <h4 className="text-lg font-semibold text-gray-700 mb-2">Current Admins</h4>
+              <ul className="list-disc pl-5">
+                {users.filter((user) => user.isAdmin).map((user) => (
+                  <li key={user.id} className="text-gray-600">
+                    {user.email}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-lg font-semibold text-gray-700 mb-2">Add Admin</h4>
+                <select
+                  value={selectedUser}
+                  onChange={(e) => setSelectedUser(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md mb-4"
+                >
+                  <option value="">Select a user</option>
+                  {users.filter((user) => !user.isAdmin).map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.email}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => updateUserRole(selectedUser, true)}
+                  className="w-full px-4 py-2 bg-green-500 text-white hover:bg-green-400 rounded-md"
+                >
+                  Add Admin
+                </button>
+              </div>
+
+              <div>
+                <h4 className="text-lg font-semibold text-gray-700 mb-2">Remove Admin</h4>
+                <select
+                  value={selectedUser}
+                  onChange={(e) => setSelectedUser(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md mb-4"
+                >
+                  <option value="">Select an admin</option>
+                  {users.filter((user) => user.isAdmin).map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.email}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => updateUserRole(selectedUser, false)}
+                  className="w-full px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded-md"
+                >
+                  Remove Admin
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </main>
