@@ -2,12 +2,18 @@
 import { useState } from 'react';
 import { db } from '../utils/firebase'; // Firebase setup
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import Select from 'react-select';
+import Select, { MultiValue } from 'react-select';
+
+// Define the ProductOption interface
+interface ProductOption {
+  value: string;
+  label: string;
+}
 
 const FeedbackForm = () => {
   const [name, setName] = useState<string>(''); // New name field
   const [type, setType] = useState<string>(''); // Default to empty string, to ensure user selects a valid option
-  const [selectedProducts, setSelectedProducts] = useState<any[]>([]); // Array for multiple product selections
+  const [selectedProducts, setSelectedProducts] = useState<MultiValue<ProductOption>>([]); // Array for multiple product selections
   const [generalCategory, setGeneralCategory] = useState<string>('');
   const [feedback, setFeedback] = useState<string>('');
 
@@ -20,8 +26,8 @@ const FeedbackForm = () => {
     value: product,
   }));
 
-  const handleProductChange = (newValue: any) => {
-    setSelectedProducts(newValue || []); // newValue is of type MultiValue<any>
+  const handleProductChange = (newValue: MultiValue<ProductOption>) => {
+    setSelectedProducts(newValue || []); // newValue is of type MultiValue<ProductOption>
   };
 
   // Subcategories for 'general' type feedback
