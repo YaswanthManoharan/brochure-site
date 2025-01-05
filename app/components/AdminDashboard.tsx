@@ -34,7 +34,7 @@ export default function AdminDashboard({ userId }: { userId: string }) {
   const [activeSection, setActiveSection] = useState<'reviews' | 'addOrRemoveRoles' | 'customers'>('reviews');
   const [selectedUser, setSelectedUser] = useState<string>('');
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false); // For collapsible header
+  const [menuOpen, setMenuOpen] = useState<boolean>(false); // State for menu toggling
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -132,16 +132,14 @@ export default function AdminDashboard({ userId }: { userId: string }) {
       <header className="bg-yellow-500 text-black p-4 shadow-md">
         <nav className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-          {/* Collapsible menu for small screens */}
-          <button
-            className="md:hidden text-xl p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? 'Close' : 'Menu'}
-          </button>
-          <div
-            className={`flex space-x-4 md:flex md:space-x-6 ${isMenuOpen ? 'flex-col absolute top-16 right-0 bg-yellow-500 p-4 w-48' : 'hidden md:flex'}`}
-          >
+          <div className="flex space-x-4 lg:hidden">
+            {/* Hamburger Menu for small screens */}
+            <button onClick={() => setMenuOpen(!menuOpen)} className="text-black text-2xl">
+              &#9776;
+            </button>
+          </div>
+          {/* Menu for larger screens */}
+          <div className="hidden lg:flex space-x-4">
             {['reviews', 'customers', ...(isSuperAdmin ? ['addOrRemoveRoles'] : [])].map((section) => (
               <button
                 key={section}
@@ -154,14 +152,32 @@ export default function AdminDashboard({ userId }: { userId: string }) {
             ))}
           </div>
         </nav>
+        {/* Collapsible menu for small screens */}
+        {menuOpen && (
+          <div className="lg:hidden mt-4 bg-yellow-500 p-4">
+            {['reviews', 'customers', ...(isSuperAdmin ? ['addOrRemoveRoles'] : [])].map((section) => (
+              <button
+                key={section}
+                className={`block text-black font-medium transition-all duration-300 hover:bg-yellow-400 p-2 rounded ${activeSection === section ? 'bg-yellow-400 border-b-4 border-black' : ''
+                  }`}
+                onClick={() => {
+                  setActiveSection(section as typeof activeSection);
+                  setMenuOpen(false); // Close menu after selection
+                }}
+              >
+                {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
+              </button>
+            ))}
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 sm:p-6 bg-gray-100 overflow-y-auto">
+      <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
         {activeSection === 'reviews' && (
           <div>
             <h3 className="text-2xl font-bold text-yellow-600 mb-6">Reviews</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {feedbacks.map((feedback) => (
                 <div
                   key={feedback.id}
@@ -202,7 +218,7 @@ export default function AdminDashboard({ userId }: { userId: string }) {
         {activeSection === 'customers' && (
           <div>
             <h3 className="text-2xl font-bold text-yellow-600 mb-6">Customers</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {contacts.map((contact) => (
                 <div
                   key={contact.id}
@@ -251,7 +267,7 @@ export default function AdminDashboard({ userId }: { userId: string }) {
               </ul>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-gray-700 mb-2">Add Admin</h4>
                 <select
@@ -301,6 +317,7 @@ export default function AdminDashboard({ userId }: { userId: string }) {
           </div>
         )}
       </main>
+
       <footer className="bg-yellow-400 text-black py-4 mt-6">
         <div className="text-center">
           <p>&copy; {new Date().getFullYear()} Your Company. All rights reserved.</p>
