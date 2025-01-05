@@ -34,6 +34,7 @@ export default function AdminDashboard({ userId }: { userId: string }) {
   const [activeSection, setActiveSection] = useState<'reviews' | 'addOrRemoveRoles' | 'customers'>('reviews');
   const [selectedUser, setSelectedUser] = useState<string>('');
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false); // For collapsible header
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -131,7 +132,16 @@ export default function AdminDashboard({ userId }: { userId: string }) {
       <header className="bg-yellow-500 text-black p-4 shadow-md">
         <nav className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-          <div className="flex space-x-4">
+          {/* Collapsible menu for small screens */}
+          <button
+            className="md:hidden text-xl p-2"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? 'Close' : 'Menu'}
+          </button>
+          <div
+            className={`flex space-x-4 md:flex md:space-x-6 ${isMenuOpen ? 'flex-col absolute top-16 right-0 bg-yellow-500 p-4 w-48' : 'hidden md:flex'}`}
+          >
             {['reviews', 'customers', ...(isSuperAdmin ? ['addOrRemoveRoles'] : [])].map((section) => (
               <button
                 key={section}
@@ -147,11 +157,11 @@ export default function AdminDashboard({ userId }: { userId: string }) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-6 bg-gray-100 overflow-y-auto">
         {activeSection === 'reviews' && (
           <div>
             <h3 className="text-2xl font-bold text-yellow-600 mb-6">Reviews</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {feedbacks.map((feedback) => (
                 <div
                   key={feedback.id}
@@ -192,7 +202,7 @@ export default function AdminDashboard({ userId }: { userId: string }) {
         {activeSection === 'customers' && (
           <div>
             <h3 className="text-2xl font-bold text-yellow-600 mb-6">Customers</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {contacts.map((contact) => (
                 <div
                   key={contact.id}
@@ -241,7 +251,7 @@ export default function AdminDashboard({ userId }: { userId: string }) {
               </ul>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-gray-700 mb-2">Add Admin</h4>
                 <select
