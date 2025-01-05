@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, signInWithPopup } from 'firebase/auth';
 import { auth, GoogleAuthProvider, db } from '../utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -8,6 +8,30 @@ import AdminDashboard from '../components/AdminDashboard';
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+
+  // Use Firebase's onAuthStateChanged to listen for authentication state changes
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        const userRef = doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUser(currentUser);
+          setIsAdmin(userData.isAdmin);
+        } else {
+          setUser(currentUser);
+          setIsAdmin(false); // If no user data, assume non-admin
+        }
+      } else {
+        setUser(null);
+        setIsAdmin(null);
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup the listener on component unmount
+  }, []);
 
   const handleLogin = async () => {
     try {
