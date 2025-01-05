@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 export default function Footer() {
   return (
@@ -50,19 +51,20 @@ export default function Footer() {
           <div className="text-center">
             <h3 className="text-lg font-medium mb-2">Follow Us</h3>
             <div className="flex justify-center space-x-6">
-              <Link href="https://facebook.com" className="text-yellow-700 hover:text-yellow-900 transition">
-                <i className="fab fa-facebook-f"></i> {/* Add appropriate icon */}
+              <Link href="https://facebook.com" className="text-yellow-700 hover:text-yellow-900 transition" target="_blank" rel="noopener noreferrer">
+                <i className="fab fa-facebook-f"></i> {/* Facebook icon */}
               </Link>
-              <Link href="https://twitter.com" className="text-yellow-700 hover:text-yellow-900 transition">
-                <i className="fab fa-twitter"></i> {/* Add appropriate icon */}
+              <Link href="https://twitter.com" className="text-yellow-700 hover:text-yellow-900 transition" target="_blank" rel="noopener noreferrer">
+                <i className="fab fa-twitter"></i> {/* Twitter icon */}
               </Link>
-              <Link href="https://instagram.com" className="text-yellow-700 hover:text-yellow-900 transition">
-                <i className="fab fa-instagram"></i> {/* Add appropriate icon */}
+              <Link href="https://instagram.com" className="text-yellow-700 hover:text-yellow-900 transition" target="_blank" rel="noopener noreferrer">
+                <i className="fab fa-instagram"></i> {/* Instagram icon */}
               </Link>
-              <Link href="https://linkedin.com" className="text-yellow-700 hover:text-yellow-900 transition">
-                <i className="fab fa-linkedin-in"></i> {/* Add appropriate icon */}
+              <Link href="https://www.linkedin.com/in/yaswanth-manoharan/" className="text-yellow-700 hover:text-yellow-900 transition" target="_blank" rel="noopener noreferrer">
+                <i className="fab fa-linkedin-in"></i> {/* LinkedIn icon */}
               </Link>
             </div>
+
           </div>
         </div>
 
