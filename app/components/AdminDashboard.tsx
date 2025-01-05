@@ -230,87 +230,98 @@ export default function AdminDashboard({ userId }: { userId: string }) {
             {/* Product Reviews Section */}
             <h4 className="text-xl font-bold text-gray-700 mb-4">Product Reviews</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {feedbacks
-                .filter((feedback) => feedback.type === 'product')
-                .sort((a, b) => Number(a.verified) - Number(b.verified)) // Convert boolean to number for sorting
-                .map((feedback) => (
-                  <div
-                    key={feedback.id}
-                    className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all duration-300"
-                  >
-                    <h4 className="text-lg font-semibold text-gray-700 mb-1">{feedback.name || 'Anonymous'}</h4>
-                    <p className="text-sm text-gray-500 mb-4">
-                      <span className="font-medium">Products:</span> {feedback.product.join(', ')}
-                    </p>
-                    <p className="text-gray-500 text-sm mb-2">
-                      <span className="font-medium">Recorded Time: </span>{feedback.formattedtime}
-                    </p>
-                    <p className="text-gray-600 mb-4">{feedback.feedback}</p>
-                    <div className="flex justify-between items-center space-x-4">
-                      <button
-                        onClick={() => verifyFeedback(feedback.id)}
-                        disabled={feedback.verified}
-                        className={`w-full px-4 py-2 rounded text-sm ${feedback.verified
-                          ? 'bg-gray-500 cursor-not-allowed text-white'
-                          : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
-                          }`}
-                      >
-                        {feedback.verified ? 'Verified' : 'Verify'}
-                      </button>
-                      {feedback.verified && (
+              {feedbacks.filter((feedback) => feedback.type === 'product').length === 0 ? (
+                <p className="text-center text-gray-500 col-span-full">No Product reviews yet...</p>
+              ) : (
+                feedbacks
+                  .filter((feedback) => feedback.type === 'product')
+                  .sort((a, b) => Number(a.verified) - Number(b.verified)) // Convert boolean to number for sorting
+                  .map((feedback) => (
+                    <div
+                      key={feedback.id}
+                      className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all duration-300"
+                    >
+                      <h4 className="text-lg font-semibold text-gray-700 mb-1">{feedback.name || 'Anonymous'}</h4>
+                      <p className="text-sm text-gray-500 mb-4">
+                        <span className="font-medium">Products:</span> {feedback.product.join(', ')}
+                      </p>
+                      <p className="text-gray-500 text-sm mb-2">
+                        <span className="font-medium">Recorded Time: </span>{feedback.formattedtime}
+                      </p>
+                      <p className="text-gray-600 mb-4">{feedback.feedback}</p>
+                      <div className="flex justify-between items-center space-x-4">
                         <button
-                          onClick={() => unverifyFeedback(feedback.id)}
-                          className="w-full px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
+                          onClick={() => verifyFeedback(feedback.id)}
+                          disabled={feedback.verified}
+                          className={`w-full px-4 py-2 rounded text-sm ${feedback.verified
+                            ? 'bg-gray-500 cursor-not-allowed text-white'
+                            : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
+                            }`}
                         >
-                          Unverify
+                          {feedback.verified ? 'Verified' : 'Verify'}
                         </button>
-                      )}
+                        {feedback.verified && (
+                          <button
+                            onClick={() => unverifyFeedback(feedback.id)}
+                            className="w-full px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
+                          >
+                            Unverify
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+              )}
             </div>
+
+            {/* Divider */}
+            <div className="border-t-2 border-yellow-600 my-6"></div>
 
             {/* General Reviews Section */}
             <h4 className="text-xl font-bold text-gray-700 mt-8 mb-4">General Reviews</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {feedbacks
-                .filter((feedback) => feedback.type === 'general')
-                .sort((a, b) => Number(a.verified) - Number(b.verified)) // Convert boolean to number for sorting
-                .map((feedback) => (
-                  <div
-                    key={feedback.id}
-                    className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all duration-300"
-                  >
-                    <h4 className="text-lg font-semibold text-gray-700 mb-1">{feedback.name || 'Anonymous'}</h4>
-                    <p className="text-sm text-gray-500 mb-4">
-                      <span className="font-medium">Category:</span> {feedback.generalCategory}
-                    </p>
-                    <p className="text-gray-500 text-sm mb-2">
-                      <span className="font-medium">Recorded Time: </span>{feedback.formattedtime}
-                    </p>
-                    <p className="text-gray-600 mb-4">{feedback.feedback}</p>
-                    <div className="flex justify-between items-center space-x-4">
-                      <button
-                        onClick={() => verifyFeedback(feedback.id)}
-                        disabled={feedback.verified}
-                        className={`w-full px-4 py-2 rounded text-sm ${feedback.verified
-                          ? 'bg-gray-500 cursor-not-allowed text-white'
-                          : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
-                          }`}
-                      >
-                        {feedback.verified ? 'Verified' : 'Verify'}
-                      </button>
-                      {feedback.verified && (
+              {feedbacks.filter((feedback) => feedback.type === 'general').length === 0 ? (
+                <p className="text-center text-gray-500 col-span-full">No General reviews yet...</p>
+              ) : (
+                feedbacks
+                  .filter((feedback) => feedback.type === 'general')
+                  .sort((a, b) => Number(a.verified) - Number(b.verified)) // Convert boolean to number for sorting
+                  .map((feedback) => (
+                    <div
+                      key={feedback.id}
+                      className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all duration-300"
+                    >
+                      <h4 className="text-lg font-semibold text-gray-700 mb-1">{feedback.name || 'Anonymous'}</h4>
+                      <p className="text-sm text-gray-500 mb-4">
+                        <span className="font-medium">Category:</span> {feedback.generalCategory}
+                      </p>
+                      <p className="text-gray-500 text-sm mb-2">
+                        <span className="font-medium">Recorded Time: </span>{feedback.formattedtime}
+                      </p>
+                      <p className="text-gray-600 mb-4">{feedback.feedback}</p>
+                      <div className="flex justify-between items-center space-x-4">
                         <button
-                          onClick={() => unverifyFeedback(feedback.id)}
-                          className="w-full px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
+                          onClick={() => verifyFeedback(feedback.id)}
+                          disabled={feedback.verified}
+                          className={`w-full px-4 py-2 rounded text-sm ${feedback.verified
+                            ? 'bg-gray-500 cursor-not-allowed text-white'
+                            : 'bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300'
+                            }`}
                         >
-                          Unverify
+                          {feedback.verified ? 'Verified' : 'Verify'}
                         </button>
-                      )}
+                        {feedback.verified && (
+                          <button
+                            onClick={() => unverifyFeedback(feedback.id)}
+                            className="w-full px-4 py-2 bg-red-500 text-white hover:bg-red-400 rounded text-sm transition-all duration-300"
+                          >
+                            Unverify
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+              )}
             </div>
           </div>
         )}
