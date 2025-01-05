@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { db } from '../utils/firebase';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
+import { auth } from '../utils/firebase'; // Assuming you have initialized Firebase Auth in utils/firebase.js
 
 type Feedback = {
   id: string;
@@ -126,6 +128,16 @@ export default function AdminDashboard({ userId }: { userId: string }) {
     alert(`User role updated to ${isAdmin ? 'Admin' : 'User'}`);
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      alert('You have successfully logged out.');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      alert('Failed to log out. Please try again.');
+    }
+  };
+
   return (
     <div className="w-full flex flex-col h-full">
       {/* Navbar */}
@@ -150,6 +162,13 @@ export default function AdminDashboard({ userId }: { userId: string }) {
                 {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
               </button>
             ))}
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="text-black font-medium transition-all duration-300 hover:bg-red-400 p-2 rounded"
+            >
+              Logout
+            </button>
           </div>
         </nav>
         {/* Collapsible menu for small screens */}
@@ -168,6 +187,13 @@ export default function AdminDashboard({ userId }: { userId: string }) {
                 {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
               </button>
             ))}
+            {/* Logout Button for mobile */}
+            <button
+              onClick={handleLogout}
+              className="block text-black font-medium transition-all duration-300 hover:bg-red-400 p-2 rounded"
+            >
+              Logout
+            </button>
           </div>
         )}
       </header>

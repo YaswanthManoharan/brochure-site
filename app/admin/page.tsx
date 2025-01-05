@@ -8,6 +8,7 @@ import AdminDashboard from '../components/AdminDashboard';
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // Add loading state
 
   // Use Firebase's onAuthStateChanged to listen for authentication state changes
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function AdminPage() {
         setUser(null);
         setIsAdmin(null);
       }
+      setLoading(false); // Set loading to false once the authentication state is checked
     });
 
     return () => unsubscribe(); // Cleanup the listener on component unmount
@@ -59,6 +61,15 @@ export default function AdminPage() {
       setIsAdmin(false);
     }
   };
+
+  // Show loading UI while authentication state is being checked
+  if (loading) {
+    return (
+      <section className="h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-xl font-bold">Loading...</div> {/* Explicit Loading UI */}
+      </section>
+    );
+  }
 
   if (user && isAdmin === true) {
     return (
