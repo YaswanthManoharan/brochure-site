@@ -4,7 +4,8 @@ import { db } from '../utils/firebase'; // Firebase setup
 import { collection, addDoc } from 'firebase/firestore';
 
 const FeedbackForm = () => {
-  const [type, setType] = useState<string>('general');
+  const [name, setName] = useState<string>(''); // New name field
+  const [type, setType] = useState<string>(''); // Default to empty string, to ensure user selects a valid option
   const [productName, setProductName] = useState<string>('');
   const [generalCategory, setGeneralCategory] = useState<string>('');
   const [feedback, setFeedback] = useState<string>('');
@@ -18,8 +19,15 @@ const FeedbackForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Ensure all required fields are filled before submitting
+    if (!type || !feedback || (type === 'product' && !productName) || (type === 'general' && !generalCategory)) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
     // Prepare the feedback data
     const feedbackData = {
+      name: name || null, // If name is provided, it will be sent, else null
       type,
       product: type === 'product' ? productName : null,
       feedback,
@@ -31,7 +39,8 @@ const FeedbackForm = () => {
     try {
       await addDoc(collection(db, 'feedback'), feedbackData);
       alert('Thank you for your valuable feedback!');
-      setType('general'); // Reset type to 'general'
+      setName(''); // Clear name field
+      setType(''); // Reset type to empty
       setProductName(''); // Clear product name
       setGeneralCategory(''); // Clear general category
       setFeedback(''); // Clear feedback text
@@ -48,6 +57,19 @@ const FeedbackForm = () => {
         Please fill in the form below to share your valuable thoughts.
       </p>
 
+      {/* Name (optional) */}
+      <div className="mb-4">
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Your Name (Optional)</label>
+        <input
+          type="text"
+          id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter your name"
+          className="p-3 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+        />
+      </div>
+
       {/* Feedback Type Selection */}
       <div className="mb-4">
         <label htmlFor="type" className="block text-sm font-medium text-gray-700">Feedback Type</label>
@@ -56,7 +78,9 @@ const FeedbackForm = () => {
           value={type}
           onChange={(e) => setType(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+          required
         >
+          <option value="" disabled>Select Feedback Type</option> {/* Placeholder */}
           <option value="general">General / Experience</option>
           <option value="product">Product</option>
         </select>
@@ -73,6 +97,7 @@ const FeedbackForm = () => {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
             required
           >
+            <option value="" disabled>Select Product</option> {/* Placeholder */}
             {products.map((product, index) => (
               <option key={index} value={product}>
                 {product}
@@ -93,6 +118,7 @@ const FeedbackForm = () => {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
             required
           >
+            <option value="" disabled>Select Category</option> {/* Placeholder */}
             {generalCategories.map((category, index) => (
               <option key={index} value={category}>
                 {category}
