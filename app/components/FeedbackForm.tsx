@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { db } from '../utils/firebase'; // Firebase setup
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import Select from 'react-select';
 
 const FeedbackForm = () => {
@@ -19,6 +19,10 @@ const FeedbackForm = () => {
     label: product,
     value: product,
   }));
+
+  const handleProductChange = (newValue: any) => {
+    setSelectedProducts(newValue || []); // newValue is of type MultiValue<any>
+  };
 
   // Subcategories for 'general' type feedback
   const generalCategories = ['Experience', 'Price', 'Quality'];
@@ -40,6 +44,7 @@ const FeedbackForm = () => {
       feedback,
       generalCategory: type === 'general' ? generalCategory : null,
       verified: false, // Add default verification status
+      timestamp: serverTimestamp(), // Add timestamp when the record is submitted
     };
 
     // Send feedback data to Firestore
@@ -102,7 +107,7 @@ const FeedbackForm = () => {
             isMulti
             options={productOptions}
             value={selectedProducts}
-            onChange={setSelectedProducts}
+            onChange={handleProductChange}
             className="w-full"
             placeholder="Select Product(s)"
             required
