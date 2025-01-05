@@ -2,16 +2,23 @@
 import { useState } from 'react';
 import { db } from '../utils/firebase'; // Firebase setup
 import { collection, addDoc } from 'firebase/firestore';
+import Select from 'react-select';
 
 const FeedbackForm = () => {
   const [name, setName] = useState<string>(''); // New name field
   const [type, setType] = useState<string>(''); // Default to empty string, to ensure user selects a valid option
-  const [productName, setProductName] = useState<string>('');
+  const [selectedProducts, setSelectedProducts] = useState<any[]>([]); // Array for multiple product selections
   const [generalCategory, setGeneralCategory] = useState<string>('');
   const [feedback, setFeedback] = useState<string>('');
 
   // Sample products array
   const products = ['Product A', 'Product B', 'Product C', 'Product D', 'Product E', 'Product F', 'Product G', 'Product H', 'Product I'];
+
+  // Convert products array to objects for react-select
+  const productOptions = products.map((product) => ({
+    label: product,
+    value: product,
+  }));
 
   // Subcategories for 'general' type feedback
   const generalCategories = ['Experience', 'Price', 'Quality'];
@@ -20,7 +27,7 @@ const FeedbackForm = () => {
     e.preventDefault();
 
     // Ensure all required fields are filled before submitting
-    if (!type || !feedback || (type === 'product' && !productName) || (type === 'general' && !generalCategory)) {
+    if (!type || !feedback || (type === 'product' && selectedProducts.length === 0) || (type === 'general' && !generalCategory)) {
       alert('Please fill in all required fields.');
       return;
     }
@@ -29,7 +36,7 @@ const FeedbackForm = () => {
     const feedbackData = {
       name: name || null, // If name is provided, it will be sent, else null
       type,
-      product: type === 'product' ? productName : null,
+      product: type === 'product' ? selectedProducts.map((item) => item.value) : null, // Store products as an array if multiple selected
       feedback,
       generalCategory: type === 'general' ? generalCategory : null,
       verified: false, // Add default verification status
@@ -41,7 +48,7 @@ const FeedbackForm = () => {
       alert('Thank you for your valuable feedback!');
       setName(''); // Clear name field
       setType(''); // Reset type to empty
-      setProductName(''); // Clear product name
+      setSelectedProducts([]); // Clear selected products
       setGeneralCategory(''); // Clear general category
       setFeedback(''); // Clear feedback text
     } catch (error) {
@@ -86,24 +93,20 @@ const FeedbackForm = () => {
         </select>
       </div>
 
-      {/* Product Name (only visible if type is 'product') */}
+      {/* Multi-Select Dropdown for Products (only visible if type is 'product') */}
       {type === 'product' && (
         <div className="mb-4">
-          <label htmlFor="productName" className="block text-sm font-medium text-gray-700">Product Name</label>
-          <select
-            id="productName"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+          <label htmlFor="products" className="block text-sm font-medium text-gray-700">Select Products</label>
+          <Select
+            id="products"
+            isMulti
+            options={productOptions}
+            value={selectedProducts}
+            onChange={setSelectedProducts}
+            className="w-full"
+            placeholder="Select Product(s)"
             required
-          >
-            <option value="" disabled>Select Product</option> {/* Placeholder */}
-            {products.map((product, index) => (
-              <option key={index} value={product}>
-                {product}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       )}
 
